@@ -28,7 +28,6 @@ class App extends Component{
     this.scrubMessages = this.scrubMessages.bind(this);
     this.getTrackURIs = this.getTrackURIs.bind(this);
     this.updateMessages = this.updateMessages.bind(this);
-    this.updateMessages();
     setInterval(this.updateMessages, 15000);
   }
 
@@ -94,7 +93,17 @@ class App extends Component{
         ))
       })
     );
-    Promise.all(trackURIs).then((completed) => this.setState({trackURIs: this.sortByPopularity(completed)}));
+    Promise.all(trackURIs).then((completed) => {
+      const sorted = this.sortByPopularity(completed);
+      const uris = [];
+      for(const row of sorted){
+        uris.push(row[0]);
+      }
+      this.setState({trackURIs: uris});
+    });
+    if(this.state.trackURIs.length > 0){
+      this.state.spotifyApi.play({uris: this.state.trackURIs});
+    };
   }
 
   sortByPopularity(array){
@@ -126,7 +135,8 @@ class App extends Component{
                   bgColor: 'rgba(0,0,0,.6)'
                 }}
                 token={this.state.spotifyApi.getAccessToken()}
-                uris={[this.state.trackURIs]}
+                uris={this.state.trackURIs}
+                autoPlay
               />
             </div>
           </div>

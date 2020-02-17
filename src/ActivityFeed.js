@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Moment from 'moment';
 import './feedqueue.css';
 
 
@@ -28,7 +27,6 @@ class ActivityFeed extends Component{
           {this.state.messages.map((m) =>
             <li key={m}>
               Anonymous requested {m}<br/>
-              {Moment(new Date()).fromNow()}
             </li>)
           }
         </ul>

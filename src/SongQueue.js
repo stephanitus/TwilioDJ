@@ -20,7 +20,7 @@ class SongQueue extends Component{
       <span className="container right">
         <h3>Up Next</h3>
         <ul>
-          {(this.state.trackNames.length === 0 || (this.state.trackNames.length === 1 && this.state.trackNames[0][0] !== "Invalid Song")) &&
+          {(this.state.trackNames.length === 0 || (this.state.trackNames.length === 1 && this.state.trackNames[0][0] === "Invalid Song")) &&
             <li style={{textAlign: 'center'}}>Waiting for your votes!</li>
           }
           {this.state.trackNames.length > 0 && this.state.trackNames.map((row) =>

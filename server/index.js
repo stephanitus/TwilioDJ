@@ -31,9 +31,11 @@ app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
 
 app.use(bodyParser.urlencoded({extended: false}));
+
 var messagecache = [];
 
 app.post('/sms', (req, res) => {
+  console.log(req.body);
   messagecache.push(req.body.Body);
   res.end();
 });
