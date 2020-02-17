@@ -30,16 +30,22 @@ app.use(pino);
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
 
+app.use(bodyParser.urlencoded({extended: false}));
 var messagecache = [];
 
 app.post('/sms', (req, res) => {
-  messagecache.push(res.body);
-  console.log(messagecache);
+  messagecache.push(req.body.Body);
+  res.end();
 });
 
 app.get('/sms', (req, res) => {
-  res.send({'messages': messagecache});
-  messagecache = [];
+  if(messagecache){
+    res.type("json");
+    res.status(200).send(JSON.stringify({ messages: messagecache }));
+    messagecache = [];
+  }else{
+    res.status(304).end();
+  }
 })
 
 app.get('/login', (req, res) => {

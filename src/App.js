@@ -56,9 +56,7 @@ class App extends Component{
     fetch('/sms', { method: 'GET' })
     .then(res => res.json())
     .then(data => {
-      if(data.length > 0){
-        this.setState({messages: data.concat(this.state.messages)});
-      }
+      this.setState({messages: (data.messages).concat(this.state.messages)});
     });
     this.scrubMessages();
   }
@@ -67,7 +65,7 @@ class App extends Component{
   scrubMessages(){
     var trackNames = (this.state.messages.map(async (input) => {
       return(
-        this.state.spotifyApi.searchTracks(`track:${input.body}`)
+        this.state.spotifyApi.searchTracks(`track:${input}`)
         .then(data => {
           if(data.body.tracks.items[0]){
             return (data.body.tracks.items[0].name + " - " + data.body.tracks.items[0].artists[0].name);

@@ -11,6 +11,12 @@ class ActivityFeed extends Component{
     };
   }
 
+  componentDidUpdate(prevProps){
+    if(this.props.messages !== prevProps.messages){
+      this.setState({messages: this.props.messages});
+    }
+  }
+
   render(){
     return(
       <span className="container left">
@@ -20,9 +26,9 @@ class ActivityFeed extends Component{
             <li style={{textAlign: 'center'}}>Nothing yet! Request a song by texting the name to <br/><b>(201)509-4954</b>!</li>
           }
           {this.state.messages.map((m) =>
-            <li key={m.sid}>
-              Anonymous requested {m.body}<br/>
-              {Moment(new Date(m.dateSent)).fromNow()}
+            <li key={m}>
+              Anonymous requested {m}<br/>
+              {Moment(new Date()).fromNow()}
             </li>)
           }
         </ul>
