@@ -7,25 +7,8 @@ class ActivityFeed extends Component{
   constructor(props){
     super(props);
     this.state = {
-      ...this.props.getState(),
-      spotifyApi: this.props.spotifyApi
+      messages: this.props.messages
     };
-    this.updateMessages = this.updateMessages.bind(this);
-    this.updateMessages(.25);
-    setInterval(this.updateMessages, 10000, .25);
-  }
-
-  updateMessages(daysOld){
-    fetch(`/api/messages?days=${daysOld}`, { method: 'GET' })
-    .then(res => res.json())
-    .then(data => {
-      if(data.length > 0){
-        this.setState({messages: data.concat(this.state.messages), empty: false});
-        this.props.mergeState(this.state);
-      }
-    });
-    fetch('api/messages', { method: 'DELETE' })
-    .then(res => res.json());
   }
 
   render(){
@@ -33,7 +16,7 @@ class ActivityFeed extends Component{
       <span className="container left">
         <h3>Activity Feed</h3>
         <ul>
-          {this.state.empty &&
+          {this.state.messages.length === 0 &&
             <li style={{textAlign: 'center'}}>Nothing yet! Request a song by texting the name to <br/><b>(201)509-4954</b>!</li>
           }
           {this.state.messages.map((m) =>

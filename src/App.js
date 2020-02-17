@@ -16,9 +16,8 @@ class App extends Component{
       loggedin: accessToken ? true : false,
       spotifyApi: new SpotifyWebApi(),
       messages: [],
-      trackName: [],
-      trackURIs: [],
-      empty: false
+      trackNames: [],
+      trackURIs: []
     };
     if(accessToken){
       this.state.spotifyApi.setAccessToken(accessToken);
@@ -26,6 +25,13 @@ class App extends Component{
     }
     this.mergeState = this.mergeState.bind(this);
     this.getState = this.getState.bind(this);
+    this.updateMessages = this.updateMessages.bind(this);
+    this.updateMessages(.25);
+    setInterval(this.updateMessages, 10000, .25);
+    this.scrubMessages = this.scrubMessages.bind(this);
+    this.getTrackURIs = this.getTrackURIs.bind(this);
+    setInterval(this.scrubMessages, 5000);
+    setInterval(this.props.mergeState, 5000, {trackURIs: this.state.trackURIs});
   }
 
   mergeState(partialState){
@@ -48,14 +54,76 @@ class App extends Component{
     return hashParams;
   }
 
+  updateMessages(daysOld){
+    fetch(`/api/messages?days=${daysOld}`, { method: 'GET' })
+    .then(res => res.json())
+    .then(data => {
+      if(data.length > 0){
+        this.setState({messages: data.concat(this.state.messages)});
+      }
+    });
+    fetch('api/messages', { method: 'DELETE' })
+    .then(res => res.json());
+  }
+
+  //Search spotify for matching song
+  scrubMessages(){
+    var trackNames = (this.state.messages.map(async (input) => {
+      return(
+        this.state.spotifyApi.searchTracks(`track:${input.body}`)
+        .then(data => {
+          if(data.body.tracks.items[0]){
+            return (data.body.tracks.items[0].name + " - " + data.body.tracks.items[0].artists[0].name);
+          }else{
+            return "Invalid Song";
+          }
+        }, err => {}
+      ))
+      })
+    );
+    Promise.all(trackNames).then((completed) => this.setState({trackNames: this.sortByPopularity(completed)}));
+    this.getTrackURIs();
+  }
+
+  getTrackURIs(){
+      var trackURIs = (this.state.messages.map(async (track) => {
+        return(
+          this.state.spotifyApi.searchTracks('track:'+track)
+          .then(data => {
+            if(data.body.tracks.items[0]){
+              return data.body.tracks.items[0].uri;
+            }else{
+              return "Invalid Song";
+            }
+          }, err => {}
+        ))
+      })
+    );
+    Promise.all(trackURIs).then((completed) => this.setState({trackURIs: this.sortByPopularity(completed)}));
+  }
+
+  sortByPopularity(array){
+    var count = {};
+    array.forEach(uri => count[uri] = (count[uri] || 0) + 1);
+
+    count = Object.entries(count);
+
+    count.sort((a,b) => {
+      if (a[1] > b[1]) return -1;
+      if (a[1] < b[1]) return 1;
+      return 0;
+    });
+    return count;
+  }
+
   render(){
     if(this.state.loggedin){
       return (
       <div className="App">
         <Titlebar />
           <div className="bgarea">
-            <ActivityFeed spotifyApi={this.state.spotifyApi} mergeState={this.mergeState} getState={this.getState}/>
-            <SongQueue spotifyApi={this.state.spotifyApi} mergeState={this.mergeState} getState={this.getState}/>
+            <ActivityFeed messages={this.state.messages}/>
+            <SongQueue trackNames={this.state.trackNames}/>
             <div className="playbackContainer">
               <SpotifyPlayer
                 styles={{
