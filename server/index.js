@@ -10,8 +10,8 @@ var client = require('twilio')(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-var client_id = '7ff84132c78a43efb8bd2bcce6b2be67';
-var client_secret = 'feeb1a4000654c3ca059147c28fe4080';
+var client_id = process.env.SPOTIFY_CLIENT_ID;
+var client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 var redirect_uri = 'http://localhost:3001/callback';
 var stateKey = 'spotify_auth_state';
 

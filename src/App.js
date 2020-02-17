@@ -3,7 +3,6 @@ import './App.css';
 import Titlebar from './Titlebar';
 import ActivityFeed from './ActivityFeed';
 import SongQueue from './SongQueue';
-import Store from './Store'
 import SpotifyWebApi from 'spotify-web-api-node';
 import SpotifyPlayer from 'react-spotify-web-playback';
 
@@ -17,6 +16,7 @@ class App extends Component{
       loggedin: accessToken ? true : false,
       spotifyApi: new SpotifyWebApi(),
       messages: [],
+      trackName: [],
       trackURIs: [],
       empty: false
     };
@@ -24,6 +24,8 @@ class App extends Component{
       this.state.spotifyApi.setAccessToken(accessToken);
       this.state.spotifyApi.setRefreshToken(refreshToken);
     }
+    this.mergeState = this.mergeState.bind(this);
+    this.getState = this.getState.bind(this);
   }
 
   mergeState(partialState){
@@ -52,8 +54,8 @@ class App extends Component{
       <div className="App">
         <Titlebar />
           <div className="bgarea">
-            <ActivityFeed spotifyApi={this.state.spotifyApi} mergeState={this.state.messageStormergeState.bind(this.state.messageStore)} getState={this.state.messageStore.getState.bind(this.state.messageStore)}/>
-            <SongQueue spotifyApi={this.state.spotifyApi} mergeState={this.state.messageStore.mergeState.bind(this.state.messageStore)} getState={this.state.messageStore.getState.bind(this.state.messageStore)}/>
+            <ActivityFeed spotifyApi={this.state.spotifyApi} mergeState={this.mergeState} getState={this.getState}/>
+            <SongQueue spotifyApi={this.state.spotifyApi} mergeState={this.mergeState} getState={this.getState}/>
             <div className="playbackContainer">
               <SpotifyPlayer
                 styles={{
@@ -61,7 +63,7 @@ class App extends Component{
                   bgColor: 'rgba(0,0,0,.6)'
                 }}
                 token={this.state.spotifyApi.getAccessToken()}
-                uris={[this.state.messageStore.getState().trackURIs]}
+                uris={[this.state.trackURIs]}
               />
             </div>
           </div>
