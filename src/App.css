@@ -1,22 +1,51 @@
 .App {
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  font-size: 1.5vw;
+}
+
+.playbackContainer {
+  position: fixed;
+  width: 100%;
+  bottom: 0px;
   text-align: center;
+  color: #0FF;
+  background-color: rgba(0,0,0,.6);
 }
 
-.App-logo {
-  height: 40vmin;
+.bgarea {
+  background-image: url("equalizer.png");
+  background-position: top;
+  background-size: contain;
+  height: stretch;
+  background-color: #333333;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.bgarea > .login {
+  display: block;
+  margin-left: 12.5%;
+  width: 75%;
+  margin-right: 12.5%;
+  height: 200px;
+  text-align: center;
+  border: 4px double #0FF;
+  color: #0FF;
+  background-color: rgba(0,0,0,.6);
 }
 
-.App-link {
-  color: #09d3ac;
+.bgarea > .login h1 {
+  margin-top: 40px;
+  margin-bottom: 30px;
+}
+
+.bgarea > .login a {
+  padding: 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  background-color: #28a82f;
+  font-size: 30px;
+  font-weight: 100px;
+  text-decoration: none;
+  color: #FFF;
 }
