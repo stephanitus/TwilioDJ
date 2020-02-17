@@ -30,22 +30,16 @@ app.use(pino);
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
 
-app.get('/api/messages', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  let date = new Date((Date.now())-86400000);
-  client.messages
-        .list({
-          dateSentAfter: date,
-          to: process.env.TWILIO_PHONE_NUMBER
-        })
-        .then(msgs => res.send(JSON.stringify(msgs)));
+var messagecache = [];
+
+app.post('/sms', (req, res) => {
+  messagecache.push(res.body);
+  console.log(messagecache);
 });
 
-app.delete('/api/messages', (req, res) => {
-  client.messages
-    .list()
-    .then(msgs => msgs.forEach(msg => client.messages(msg.sid).remove()))
-    .then(() => res.send(JSON.stringify('success')));
+app.get('/sms', (req, res) => {
+  res.send({'messages': messagecache});
+  messagecache = [];
 })
 
 app.get('/login', (req, res) => {

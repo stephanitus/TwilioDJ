@@ -25,13 +25,11 @@ class App extends Component{
     }
     this.mergeState = this.mergeState.bind(this);
     this.getState = this.getState.bind(this);
-    this.updateMessages = this.updateMessages.bind(this);
-    this.updateMessages(.25);
-    setInterval(this.updateMessages, 10000, .25);
     this.scrubMessages = this.scrubMessages.bind(this);
     this.getTrackURIs = this.getTrackURIs.bind(this);
-    setInterval(this.scrubMessages, 5000);
-    setInterval(this.props.mergeState, 5000, {trackURIs: this.state.trackURIs});
+    this.updateMessages = this.updateMessages.bind(this);
+    this.updateMessages();
+    setInterval(this.updateMessages, 15000);
   }
 
   mergeState(partialState){
@@ -54,16 +52,15 @@ class App extends Component{
     return hashParams;
   }
 
-  updateMessages(daysOld){
-    fetch(`/api/messages?days=${daysOld}`, { method: 'GET' })
+  updateMessages(){
+    fetch('/sms', { method: 'GET' })
     .then(res => res.json())
     .then(data => {
       if(data.length > 0){
         this.setState({messages: data.concat(this.state.messages)});
       }
     });
-    fetch('api/messages', { method: 'DELETE' })
-    .then(res => res.json());
+    this.scrubMessages();
   }
 
   //Search spotify for matching song
